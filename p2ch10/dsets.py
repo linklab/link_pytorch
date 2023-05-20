@@ -88,7 +88,6 @@ class Ct:
 
         ct_mhd = sitk.ReadImage(mhd_path)
         ct_a = np.array(sitk.GetArrayFromImage(ct_mhd), dtype=np.float32)
-
         # CTs are natively expressed in https://en.wikipedia.org/wiki/Hounsfield_scale
         # HU are scaled oddly, with 0 g/cc (air, approximately) being -1000 and 1 g/cc (water) being 0.
         # The lower bound gets rid of negative density stuff used to indicate out-of-FOV
@@ -145,6 +144,7 @@ def getCtRawCandidate(series_uid, center_xyz, width_irc):
     ct = getCt(series_uid)
     ct_chunk, center_irc = ct.getRawCandidate(center_xyz, width_irc)
     return ct_chunk, center_irc
+
 
 class LunaDataset(Dataset):
     def __init__(self,

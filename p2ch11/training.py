@@ -13,20 +13,21 @@ from torch.optim import SGD, Adam
 from torch.utils.data import DataLoader
 
 from util.util import enumerateWithEstimate
-from .dsets import LunaDataset
+from p2ch11.dsets import LunaDataset
 from util.logconf import logging
-from .model import LunaModel
+from p2ch11.model import LunaModel
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)
 log.setLevel(logging.INFO)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 # Used for computeBatchLoss and logMetrics to index into metrics_t/metrics_a
 METRICS_LABEL_NDX=0
 METRICS_PRED_NDX=1
 METRICS_LOSS_NDX=2
 METRICS_SIZE = 3
+
 
 class LunaTrainingApp:
     def __init__(self, sys_argv=None):
@@ -105,6 +106,7 @@ class LunaTrainingApp:
 
         return train_dl
 
+
     def initValDl(self):
         val_ds = LunaDataset(
             val_stride=10,
@@ -141,8 +143,8 @@ class LunaTrainingApp:
         val_dl = self.initValDl()
 
         for epoch_ndx in range(1, self.cli_args.epochs + 1):
-
-            log.info("Epoch {} of {}, {}/{} batches of size {}*{}".format(
+            print(epoch_ndx, "!!!")
+            log.info("Epoch {0} of {1}, {2}/{3} batches of size {4}*{5}".format(
                 epoch_ndx,
                 self.cli_args.epochs,
                 len(train_dl),
@@ -160,7 +162,6 @@ class LunaTrainingApp:
         if hasattr(self, 'trn_writer'):
             self.trn_writer.close()
             self.val_writer.close()
-
 
     def doTraining(self, epoch_ndx, train_dl):
         self.model.train()
@@ -199,7 +200,6 @@ class LunaTrainingApp:
 
         return trnMetrics_g.to('cpu')
 
-
     def doValidation(self, epoch_ndx, val_dl):
         with torch.no_grad():
             self.model.eval()
@@ -216,11 +216,13 @@ class LunaTrainingApp:
             )
             for batch_ndx, batch_tup in batch_iter:
                 self.computeBatchLoss(
-                    batch_ndx, batch_tup, val_dl.batch_size, valMetrics_g)
+                    batch_ndx,
+                    batch_tup,
+                    val_dl.batch_size,
+                    valMetrics_g
+                )
 
         return valMetrics_g.to('cpu')
-
-
 
     def computeBatchLoss(self, batch_ndx, batch_tup, batch_size, metrics_g):
         input_t, label_t, _series_list, _center_list = batch_tup

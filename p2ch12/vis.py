@@ -14,7 +14,6 @@ def findPositiveSamples(start_ndx=0, limit=10):
     positiveSample_list = []
     for sample_tup in ds.candidateInfo_list:
         if sample_tup.isNodule_bool:
-            print(len(positiveSample_list), sample_tup)
             positiveSample_list.append(sample_tup)
 
         if len(positiveSample_list) >= limit:

@@ -11,4 +11,8 @@ print(y.is_contiguous())  # False
 y = y.contiguous()
 
 # check if y is now contiguous
-print(y.is_contiguous())  # True
+print(y.is_contiguous())  # Tru
+
+
+a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]# e
+print(a[::2])

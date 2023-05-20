@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('nbagg')
+#matplotlib.use('nbagg')
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -93,6 +93,7 @@ def showCandidate(series_uid, batch_ndx=None, **kwargs):
                 label.set_fontsize(20)
             plt.imshow(ct_a[index], clim=clim, cmap='gray')
 
+    plt.show()
 
     print(series_uid, batch_ndx, bool(pos_t[0]), pos_list)
 

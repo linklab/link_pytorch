@@ -14,7 +14,7 @@ class LunaModel(nn.Module):
     def __init__(self, in_channels=1, conv_channels=8):
         super().__init__()
 
-        self.tail_batchnorm = nn.BatchNorm3d(1)
+        self.tail_batchnorm = nn.BatchNorm3d(num_features=1)
 
         self.block1 = LunaBlock(in_channels, conv_channels)
         self.block2 = LunaBlock(conv_channels, conv_channels * 2)
@@ -40,14 +40,11 @@ class LunaModel(nn.Module):
                     m.weight.data, a=0, mode='fan_out', nonlinearity='relu',
                 )
                 if m.bias is not None:
-                    fan_in, fan_out = \
-                        nn.init._calculate_fan_in_and_fan_out(m.weight.data)
+                    fan_in, fan_out = nn.init._calculate_fan_in_and_fan_out(m.weight.data)
                     bound = 1 / math.sqrt(fan_out)
                     nn.init.normal_(m.bias, -bound, bound)
 
-
-
-    def forward(self, input_batch):
+    def forward(self, input_batch):  # (N, C, D, H, W)
         bn_output = self.tail_batchnorm(input_batch)
 
         block_out = self.block1(bn_output)
