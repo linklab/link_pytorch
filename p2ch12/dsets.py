@@ -27,18 +27,26 @@ log.setLevel(logging.DEBUG)
 
 raw_cache = getCache('part2ch12_raw')
 
-CandidateInfoTuple = namedtuple('CandidateInfoTuple', 'isNodule_bool, diameter_mm, series_uid, center_xyz')
+CandidateInfoTuple = namedtuple(
+    'CandidateInfoTuple', 'isNodule_bool, diameter_mm, series_uid, center_xyz'
+)
+
+CURRENT_PATH = os.path.dirname(os.path.realpath(__file__))
+PROJECT_HOME = os.path.abspath(os.path.join(CURRENT_PATH, os.pardir))
+print("PROJECT_HOME", PROJECT_HOME)
 
 @functools.lru_cache(1)
 def getCandidateInfoList(requireOnDisk_bool=True):
     # We construct a set with all series_uids that are present on disk.
     # This will let us use the data, even if we haven't downloaded all of
     # the subsets yet.
-    mhd_list = glob.glob('data-unversioned/part2/luna/subset*/*.mhd')
+    mhd_list = glob.glob(
+        os.path.join(PROJECT_HOME, 'data-unversioned', 'part2', 'luna', 'subset*', '*.mhd')
+    )
     presentOnDisk_set = {os.path.split(p)[-1][:-4] for p in mhd_list}
 
     diameter_dict = {}
-    with open('data/part2/luna/annotations.csv', "r") as f:
+    with open(os.path.join(PROJECT_HOME, 'data', 'part2', 'luna', 'annotations.csv'), "r") as f:
         for row in list(csv.reader(f))[1:]:
             series_uid = row[0]
             annotationCenter_xyz = tuple([float(x) for x in row[1:4]])
@@ -49,7 +57,7 @@ def getCandidateInfoList(requireOnDisk_bool=True):
             )
 
     candidateInfo_list = []
-    with open('data/part2/luna/candidates.csv', "r") as f:
+    with open(os.path.join(PROJECT_HOME, 'data', 'part2', 'luna', 'candidates.csv'), "r") as f:
         for row in list(csv.reader(f))[1:]:
             series_uid = row[0]
 
@@ -83,7 +91,7 @@ def getCandidateInfoList(requireOnDisk_bool=True):
 class Ct:
     def __init__(self, series_uid):
         mhd_path = glob.glob(
-            'data-unversioned/part2/luna/subset*/{}.mhd'.format(series_uid)
+            os.path.join(PROJECT_HOME, 'data-unversioned', 'part2', 'luna', 'subset*', '{}.mhd'.format(series_uid))
         )[0]
 
         ct_mhd = sitk.ReadImage(mhd_path)
@@ -177,7 +185,6 @@ def getCtAugmentedCandidate(
             random_float = (random.random() * 2 - 1)
             transform_t[i,i] *= 1.0 + scale_float * random_float
 
-
     if 'rotate' in augmentation_dict:
         angle_rad = random.random() * math.pi * 2
         s = math.sin(angle_rad)
@@ -231,8 +238,9 @@ class LunaDataset(Dataset):
             self.candidateInfo_list = copy.copy(candidateInfo_list)
             self.use_cache = False
         else:
-            self.candidateInfo_list = copy.copy(getCandidateInfoList())
+            self.candidateInfo_list = copy.copy(getCandidateInfoList(requireOnDisk_bool=False))
             self.use_cache = True
+            # print("###################", len(self.candidateInfo_list))
 
         if series_uid:
             self.candidateInfo_list = [
