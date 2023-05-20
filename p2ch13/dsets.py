@@ -28,9 +28,16 @@ log.setLevel(logging.DEBUG)
 
 raw_cache = getCache('part2ch13_raw')
 
-MaskTuple = namedtuple('MaskTuple', 'raw_dense_mask, dense_mask, body_mask, air_mask, raw_candidate_mask, candidate_mask, lung_mask, neg_mask, pos_mask')
+MaskTuple = namedtuple(
+    'MaskTuple',
+    'raw_dense_mask, dense_mask, body_mask, air_mask, raw_candidate_mask, candidate_mask, lung_mask, neg_mask, pos_mask'
+)
 
-CandidateInfoTuple = namedtuple('CandidateInfoTuple', 'isNodule_bool, hasAnnotation_bool, isMal_bool, diameter_mm, series_uid, center_xyz')
+CandidateInfoTuple = namedtuple(
+    'CandidateInfoTuple',
+    'isNodule_bool, hasAnnotation_bool, isMal_bool, diameter_mm, series_uid, center_xyz'
+)
+
 
 @functools.lru_cache(1)
 def getCandidateInfoList(requireOnDisk_bool=True):

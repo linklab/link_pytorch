@@ -46,12 +46,12 @@ class UNetWrapper(nn.Module):
         # nn.init.constant_(self.unet.last.bias, -4)
         # nn.init.constant_(self.unet.last.bias, 4)
 
-
     def forward(self, input_batch):
         bn_output = self.input_batchnorm(input_batch)
         un_output = self.unet(bn_output)
         fn_output = self.final(un_output)
         return fn_output
+
 
 class SegmentationAugmentation(nn.Module):
     def __init__(

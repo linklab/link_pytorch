@@ -132,3 +132,5 @@ dmypy.json
 0_temp
 data-unversioned
 data
+
+.idea
